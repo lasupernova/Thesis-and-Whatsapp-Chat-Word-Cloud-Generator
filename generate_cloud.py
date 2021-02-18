@@ -35,7 +35,7 @@ def main():
     return custom_args
 
 class CloudFromDoc(WordCloud):
-    def __init__(self, file_path='example.txt', add_stopwords=['said','would','one'], background_color='white', 
+    def __init__(self, file_path='doc.txt', add_stopwords=['said','would','one'], background_color='white', 
                  width=1500, height=1000, maxwords=1000, horizontal_ratio=0.75, 
                  collocation_threshold=30, hue=322, saturation=None, lightness=None, output=None, **kwargs):
         
