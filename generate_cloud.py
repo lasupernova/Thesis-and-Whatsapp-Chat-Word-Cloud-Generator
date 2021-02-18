@@ -27,7 +27,11 @@ def main():
 
     # filter out None-values
     custom_args = {k:v for k,v in vars(args).items() if v!=None}
-    print(custom_args)
+    if len(custom_args) > 0:
+        print("Word cloud settings customized:")
+        for k, v in custom_args.items():
+            print(f"\t{k} set to: {v}")
+        print('\n')
     return custom_args
 
 class CloudFromDoc(WordCloud):
@@ -48,11 +52,11 @@ class CloudFromDoc(WordCloud):
         self.hue = hue
         self.saturation = saturation
         self.lightness = lightness
-        self.output = output
+        self.output = output 
         
-        print(f'Creating word cloud from {self.path}...')
         print(f'Word cloud will be created with a width of {self.width} and a height of {self.height} pixel')
-        print(f'Word cloud hsl-color will be: hue-{"random" if self.hue==None else str(self.hue)}, saturation-{"random" if self.saturation==None else str(self.saturation)}, lightness-{"random" if self.lightness==None else str(self.ligthness)}')
+        print(f'Word cloud hsl-color will be: hue-{"random" if self.hue==None else str(self.hue)}, saturation-{"random" if self.saturation==None else str(self.saturation)}, lightness-{"random" if self.lightness==None else str(self.lightness)}')
+        print(f'Creating word cloud from {self.path}...')
 
         self.cloud = WordCloud(background_color=self.bg_color, 
                    width=self.width, 
