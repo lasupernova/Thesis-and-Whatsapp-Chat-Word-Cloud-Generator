@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 from nltk.corpus import stopwords as sw
 import sys
 import argparse
+import itertools
 
 def main():
     parser = argparse.ArgumentParser(description='Customize your word cloud!')
@@ -45,6 +46,21 @@ def main():
                 if len(all_args['replace_word']) != len(all_args['with_substitute']):
                     print("Error: '-x1' and '-x2' need to need to be of the same length!")
                     sys.exit()
+                else:
+                    counter=0
+                    for word in all_args['replace_word']:
+                        if "_" in word:
+                            separate = word.replace("_", " ")
+                            all_args['replace_word'][counter] = separate
+                        counter+=1
+
+                    counter=0
+                    for word in all_args['with_substitute']:
+                        if "_" in word:
+                            separate = word.replace("_", " ")
+                            all_args['with_substitute'][counter] = separate
+                        counter+=1
+
             except Exception as e:
                 print(f"{e}\nFix: '-x1' and '-x2' need to be passed together!")
                 sys.exit()
@@ -112,9 +128,9 @@ class CloudFromDoc(WordCloud):
         Function taking to lists and passing them to the string method .replace();
         Saves new string with replaced values in self.text
         '''
-        # add lower-case version and capitalized version for each word in list to new list --> to account for words at beginning of the sentence
-        to_replace = [x for i in replace_word for x in (i.lower() ,i.capitalize())]
-        substitute = [x for i in with_substitute for x in (i.lower() ,i.capitalize())]
+        # add lower-case versio, the capitalized version and the title version for each word in list to new list --> to account for words at beginning of the sentence
+        to_replace = [x for i in replace_word for x in (i.lower() ,i.capitalize(),i.title())]
+        substitute = [x for i in with_substitute for x in (i.lower() ,i.capitalize(),i.title())]
 
         for word, subs in zip(to_replace, substitute): 
             self.text = self.text.replace(word, subs) 
@@ -147,11 +163,6 @@ class CloudFromDoc(WordCloud):
 if __name__ == '__main__':
     custom_args, word_replacements = main()
     if word_replacements:
-        # print(word_replacements)
-        # test = 'test this testing thing to tester a bit more'
-        # for r, s in zip(word_replacements['replace_word'], word_replacements['with_substitute']):
-        #     test = test.replace(r, s)
-        # print(test)
         CloudFromDoc(**custom_args).replace_words(**word_replacements).mk_cloud()
     else:
         CloudFromDoc(**custom_args).mk_cloud() 
