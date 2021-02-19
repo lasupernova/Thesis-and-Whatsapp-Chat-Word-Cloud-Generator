@@ -43,14 +43,16 @@ If you don't want to use the command line, you can use the Jupiter Notebook inst
 <br><br><br>
 ### **Examples**:<br>
 A few examples of different custom settings and the results:<br><br>
-Regular usage: `python generate_cloud.py` <br>
+__Regular usage:__ `python generate_cloud.py` <br><br>
 <img src="https://github.com/lasupernova/thesis_wordcloud_generator/blob/master/example_output/example_cloud1.png" width="600" height="400">
 <hr>
-
 Let's change 'count' to 'Simon Hastings' (...looking at you __Bridgerton__...) and use a black background <br>
-Custom usage: `python generate_cloud.py -x1 count -x2 Simon_Hastings -f example.txt -o bridgerton2.png -bg black`<br><br>
-I only replaced one word (count -> simon hastings), but multiple words can be changed at the same time (e.g> `-x1 count Monte_Cristo -x2 simon_hastings London`). Note that words that belong together, such as "Monte Cristo", should be connected with an underscore.<br><br>
+__Custom usage:__ `python generate_cloud.py -x1 count -x2 Simon_Hastings -f example.txt -o bridgerton2.png -bg black`<br><br>
+I only replaced one word (count -> simon hastings), but multiple words can be changed at the same time (e.g: `-x1 count Monte_Cristo -x2 simon_hastings London`). <br>Note that words that belong together, such as "Monte Cristo", should be connected with an underscore.<br><br>
 <img src="https://github.com/lasupernova/thesis_wordcloud_generator/blob/master/example_output/bridgerton2.png" width="600" height="400"><hr>
+__Custom usage:__ 
+<br>Left (saturation and lightness adjusted): `python generate_cloud.py -s 25 -l 90`<br>
+<br>Right (allow for random word colors): `python generate_cloud.py -hue None`<br><br>
 <img src="https://github.com/lasupernova/thesis_wordcloud_generator/blob/master/example_output/example2_saturation25_lightness90.png" width="400" height="266">
 <img src="https://github.com/lasupernova/thesis_wordcloud_generator/blob/master/example_output/example3_randomHue.png" width="400" height="266">
 
