@@ -12,7 +12,7 @@ def main():
     parser = argparse.ArgumentParser(description='Customize your word cloud!')
     parser.add_argument('-f', action='store', dest='file_path',help='path to text document', type=str)
     parser.add_argument('-hue', action='store', dest='hue',help='color for word cloud', type=int)
-    parser.add_argument('-sw', action='store', dest='add_stopwords',help='list of stopwords to add to generic stopwords', type=list)
+    parser.add_argument('-sw', action='store', dest='add_stopwords',help='list of stopwords to add to generic stopwords', type=str)
     parser.add_argument('-bg', action='store', dest='background_color',help='choose background color; check named color options in Python', type=str)
     parser.add_argument('-w', action='store', dest='width',help='image width in pixels', type=int)
     parser.add_argument('-height', action='store', dest='height',help='image height in pixels', type=int)
@@ -22,17 +22,36 @@ def main():
     parser.add_argument('-s', action='store', dest='saturation',help='saturation', type=int)
     parser.add_argument('-l', action='store', dest='lightness',help='lightness', type=int)
     parser.add_argument('-o', action='store', dest='output',help='name of output file', type=str)
+    parser.add_argument('-x1', action='store', dest='replace_word',help='words to replace with substitutes in text; needs to be used in combination with "-x2"', type=str)
+    parser.add_argument('-x2', action='store', dest='with_substitute',help='substitut words; need to be added in order with "-x1"', type=str)
 
     args = parser.parse_args()
 
     # filter out None-values
     custom_args = {k:v for k,v in vars(args).items() if v!=None}
+
+    # check if command line arguments were passed
     if len(custom_args) > 0:
         print("Word cloud settings customized:")
+        
         for k, v in custom_args.items():
+            if k in ['add_stopwords', 'replace_word', 'with_substitute']:
+                v = [word.strip() for word in v.split(',')]
+                print(f'{k}: {v}')
+                custom_args[k] = v
             print(f"\t{k} set to: {v}")
         print('\n')
+
+        # make sure x1 and x2 command line entries were of the same length if either of these arguments were passed; if not throw error
+        if (custom_args['replace_word'] or custom_args['with_substitute']) and (len(custom_args['replace_word']) != len(custom_args['with_substitute'])):
+            print("Error: '-x1' and '-x2' need to need to be of the same length!")
+            sys.exit()
+
+    # exclude values passed to -x1 or -x2 from custom_args, as these should not be passed to class constructor - save these values in  
+    custom_args = {k:v for k,v in custom_args.items() if k not in ["replace_word", "with_substitute"]}
+
     return custom_args
+
 
 class CloudFromDoc(WordCloud):
     def __init__(self, file_path='doc.txt', add_stopwords=['said','would','one'], background_color='white', 
@@ -63,9 +82,9 @@ class CloudFromDoc(WordCloud):
             prefer_horizontal=self.horizontal,
             collocation_threshold=self.collocation_thresh)
 
-        # self.generate_cloud()
-
-        # def generate_cloud(self):
+        self.mk_cloud()
+ 
+    def mk_cloud(self):
         
         print(f'Word cloud will be created with a width of {self.width} and a height of {self.height} pixel')
         print(f'Word cloud hsl-color will be: hue-{"random" if self.hue==None else str(self.hue)}, saturation-{"random" if self.saturation==None else str(self.saturation)}, lightness-{"random" if self.lightness==None else str(self.lightness)}')
@@ -103,7 +122,7 @@ class CloudFromDoc(WordCloud):
         saturation = '' if self.saturation== None else 'S'+str(self.saturation)
         lightness = '' if self.lightness== None else 'L'+str(self.lightness)
         if self.output==None:
-            self.output = f"wc_Size{self.width}_{self.height}_hslColor{'Random' if (self.hue==None and self.saturation==None and self.lightness==None) else f'{hue}{saturation}{lightness}'}.png"
+            self.output = f"cloud_Size{self.width}_{self.height}_hslColor{'Random' if (self.hue==None and self.saturation==None and self.lightness==None) else f'{hue}{saturation}{lightness}'}.png"
         return cwd
 
     def save_wc(self):
