@@ -1,5 +1,5 @@
 # Word Cloud Generator
-Python CLI tool to generate customized word clouds from documents, especially large documents such as dissertations, master and bachelor thesis. Depending on `wordcloud` and `nltk` <br>
+Python CLI tool to generate customized word clouds from documents, especially large documents such as dissertations, master and bachelor thesis (or export your __WhatsApp Chat__ and use it on your conversations with different people!). Depending on `wordcloud` and `nltk` <br>
 Don't want to work with the command line? Use the jupyter notebook instead (see instructions and examples below)<hr>
 ![Example of word cloud, Low Height](example_output/example6_width1500_height100.png?raw=true "Custom settings")
 ### **Example text file for practice:**<br>
