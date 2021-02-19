@@ -34,6 +34,7 @@ If you don't want to use the command line, you can use the Jupiter Notebook inst
  - Install [Jupyter Notebook](https://test-jupyter.readthedocs.io/en/latest/install.html)
  - Download Github repository
  - Open Notebook
+ - replace _example.txt_ with the name of your text file / thesis (in the notebook); or save your file in the same folder as the jupyter notebook and rename it _example.txt_
  - go to `Cell` - click `Run all`
  - check you working directory: the word cloud image should be saved there now under a name similar to **wc_Size1500_1000_hslColorH322** (unless you changed the parameter for the output)
 <br><br><br>
