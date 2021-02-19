@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-from os import path
+import os
 from PIL import Image
 from wordcloud import WordCloud, STOPWORDS, ImageColorGenerator
 import matplotlib.pyplot as plt
@@ -53,23 +53,31 @@ class CloudFromDoc(WordCloud):
         self.saturation = saturation
         self.lightness = lightness
         self.output = output 
+
+        self.cloud = WordCloud(
+            background_color=self.bg_color, 
+            width=self.width, 
+            height=self.height,
+            stopwords=self.stopwords,
+            max_words=self.maxwords,
+            prefer_horizontal=self.horizontal,
+            collocation_threshold=self.collocation_thresh)
+
+        # self.generate_cloud()
+
+        # def generate_cloud(self):
         
         print(f'Word cloud will be created with a width of {self.width} and a height of {self.height} pixel')
         print(f'Word cloud hsl-color will be: hue-{"random" if self.hue==None else str(self.hue)}, saturation-{"random" if self.saturation==None else str(self.saturation)}, lightness-{"random" if self.lightness==None else str(self.lightness)}')
         print(f'Creating word cloud from {self.path}...')
 
-        self.cloud = WordCloud(background_color=self.bg_color, 
-                   width=self.width, 
-                   height=self.height,
-                   stopwords=self.stopwords,
-                   max_words=self.maxwords,
-                  prefer_horizontal=self.horizontal,
-                  collocation_threshold=self.collocation_thresh)
-        
         self.cloud.generate(self.text)
         
+        # output name 
+        cwd = self.set_output()
+
         # show
-        plt.figure(figsize=[50,30])
+        plt.figure(f"Don't worry, this word cloud was saved in {cwd} as:      '{self.output}'", figsize=[50,30])
         plt.imshow(self.cloud.recolor(color_func = self.custom_color_func), interpolation="sinc")
         plt.axis("off")
 
@@ -88,13 +96,18 @@ class CloudFromDoc(WordCloud):
 
     def custom_color_func(self, **kwargs):
         return(f"hsl({np.random.randint(0,360) if self.hue==None else self.hue}, {np.random.randint(15,100) if self.saturation==None else self.saturation}%, {np.random.randint(0,60) if self.lightness==None else self.lightness}%)")
-    
-    def save_wc(self):
+
+    def set_output(self):  
+        cwd = os.getcwd()
         hue = '' if self.hue== None else 'H'+str(self.hue)
         saturation = '' if self.saturation== None else 'S'+str(self.saturation)
         lightness = '' if self.lightness== None else 'L'+str(self.lightness)
         if self.output==None:
             self.output = f"wc_Size{self.width}_{self.height}_hslColor{'Random' if (self.hue==None and self.saturation==None and self.lightness==None) else f'{hue}{saturation}{lightness}'}.png"
+        return cwd
+
+    def save_wc(self):
+        print(self.output)
         self.cloud.to_file(self.output)
         print(f'Wordcloud image saved in {self.output}')
 
