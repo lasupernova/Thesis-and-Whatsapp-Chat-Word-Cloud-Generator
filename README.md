@@ -24,8 +24,13 @@ Ratio of words to display horizontally | -h_ratio | integer<br> (from 0-1)
 Saturation | -s | integer<br> (from 0-100)
 Lightness | -l | integer<br> (from 0-100)
 File name to store output | -o | string <br> (NOTE: should end with .png)
+
+**Example**:<br>
+`python generate_cloud.py -file_path my_thesis_final_version.txt -bg black -h_ratio 0.6 -o wordcloud_thesis.png`<br>
+ - This example will take a text file named 'my_thesis_final_version.txt' and save the wordcloud to 'wordcloud_thesis.png'. The word cloud will have a black background and only 60% of the words will be displayed horizontally (and 40% vertically).
 <br><br><br>
-### **Jupyter Notebook**:<br>
+### **Alternative: Jupyter Notebook**:<br>
+If you don't want to use the command line, you can use the Jupiter Notebook instead: <br>
  - Install [Jupyter Notebook](https://test-jupyter.readthedocs.io/en/latest/install.html)
  - Download Github repository
  - Open Notebook
