@@ -23,7 +23,10 @@ Maximum number of words to display | -maxwords | integer
 Ratio of words to display horizontally | -h_ratio | integer<br> (from 0-1)
 Saturation | -s | integer<br> (from 0-100)
 Lightness | -l | integer<br> (from 0-100)
-File name to store output | -o | string <br> (NOTE: should end with .png)
+File name to store output | -o | string <br> (NOTE: should end with '.png')
+Words to replace in text | -x1 | string <br> (NOTE: can be multiple strings)<br>(NOTE: always needs to be used together with _-x2_)
+Substitutes for words passed in -x1 | -x2 | string <br> (NOTE: can be multiple strings)<br>(NOTE: always needs to be used together with _-x1_)
+
 
 **Example**:<br>
 `python generate_cloud.py -file_path my_thesis_final_version.txt -bg black -h_ratio 0.6 -o wordcloud_thesis.png`<br>
@@ -34,6 +37,7 @@ If you don't want to use the command line, you can use the Jupiter Notebook inst
  - Install [Jupyter Notebook](https://test-jupyter.readthedocs.io/en/latest/install.html)
  - Download Github repository
  - Open Notebook
+ - replace _example.txt_ with the name of your text file / thesis (in the notebook); or save your file in the same folder as the jupyter notebook and rename it _example.txt_
  - go to `Cell` - click `Run all`
  - check you working directory: the word cloud image should be saved there now under a name similar to **wc_Size1500_1000_hslColorH322** (unless you changed the parameter for the output)
 <br><br><br>
