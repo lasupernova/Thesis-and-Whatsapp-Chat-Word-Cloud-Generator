@@ -12,7 +12,7 @@ def main():
     parser = argparse.ArgumentParser(description='Customize your word cloud!')
     parser.add_argument('-f', action='store', dest='file_path',help='path to text document', type=str)
     parser.add_argument('-hue', action='store', dest='hue',help='color for word cloud', type=int)
-    parser.add_argument('-sw', action='store', dest='add_stopwords',help='list of stopwords to add to generic stopwords', type=str)
+    parser.add_argument('-sw', action='store', dest='add_stopwords', nargs='*', help='list of stopwords to add to generic stopwords', type=str)
     parser.add_argument('-bg', action='store', dest='background_color',help='choose background color; check named color options in Python', type=str)
     parser.add_argument('-w', action='store', dest='width',help='image width in pixels', type=int)
     parser.add_argument('-height', action='store', dest='height',help='image height in pixels', type=int)
@@ -22,35 +22,38 @@ def main():
     parser.add_argument('-s', action='store', dest='saturation',help='saturation', type=int)
     parser.add_argument('-l', action='store', dest='lightness',help='lightness', type=int)
     parser.add_argument('-o', action='store', dest='output',help='name of output file', type=str)
-    parser.add_argument('-x1', action='store', dest='replace_word',help='words to replace with substitutes in text; needs to be used in combination with "-x2"', type=str)
-    parser.add_argument('-x2', action='store', dest='with_substitute',help='substitut words; need to be added in order with "-x1"', type=str)
+    parser.add_argument('-x1', action='store', dest='replace_word', nargs='*',help='words to replace with substitutes in text; needs to be used in combination with "-x2"', type=str)
+    parser.add_argument('-x2', action='store', dest='with_substitute', nargs='*',help='substitut words; need to be added in order with "-x1"', type=str)
 
     args = parser.parse_args()
 
     # filter out None-values
-    custom_args = {k:v for k,v in vars(args).items() if v!=None}
+    all_args = {k:v for k,v in vars(args).items() if v!=None}
 
     # check if command line arguments were passed
-    if len(custom_args) > 0:
+    if len(all_args) > 0:
+
         print("Word cloud settings customized:")
         
-        for k, v in custom_args.items():
-            if k in ['add_stopwords', 'replace_word', 'with_substitute']:
-                v = [word.strip() for word in v.split(',')]
-                print(f'{k}: {v}')
-                custom_args[k] = v
+        for k, v in all_args.items():
             print(f"\t{k} set to: {v}")
         print('\n')
 
         # make sure x1 and x2 command line entries were of the same length if either of these arguments were passed; if not throw error
-        if (custom_args['replace_word'] or custom_args['with_substitute']) and (len(custom_args['replace_word']) != len(custom_args['with_substitute'])):
-            print("Error: '-x1' and '-x2' need to need to be of the same length!")
-            sys.exit()
+        if ('replace_word' in all_args.keys() or 'with_substitute' in all_args.keys()):
+            try:
+                if len(all_args['replace_word']) != len(all_args['with_substitute']):
+                    print("Error: '-x1' and '-x2' need to need to be of the same length!")
+                    sys.exit()
+            except Exception as e:
+                print(f"{e}\nFix: '-x1' and '-x2' need to be passed together!")
+                sys.exit()
 
-    # exclude values passed to -x1 or -x2 from custom_args, as these should not be passed to class constructor - save these values in  
-    custom_args = {k:v for k,v in custom_args.items() if k not in ["replace_word", "with_substitute"]}
+        # exclude values passed to -x1 or -x2 from custom_args, as these should not be passed to class constructor - save these values in  
+        custom_args = {k:v for k,v in all_args.items() if k not in ["replace_word", "with_substitute"]}
+        word_replacements = {k:v for k,v in all_args.items() if k in ["replace_word", "with_substitute"]}
 
-    return custom_args
+    return custom_args, word_replacements
 
 
 class CloudFromDoc(WordCloud):
@@ -81,8 +84,6 @@ class CloudFromDoc(WordCloud):
             max_words=self.maxwords,
             prefer_horizontal=self.horizontal,
             collocation_threshold=self.collocation_thresh)
-
-        self.mk_cloud()
  
     def mk_cloud(self):
         
@@ -105,6 +106,19 @@ class CloudFromDoc(WordCloud):
 
         plt.tight_layout()
         plt.show()
+
+    def replace_words(self, replace_word:list, with_substitute:list):
+        '''
+        Function taking to lists and passing them to the string method .replace();
+        Saves new string with replaced values in self.text
+        '''
+        # add lower-case version and capitalized version for each word in list to new list --> to account for words at beginning of the sentence
+        to_replace = [x for i in replace_word for x in (i.lower() ,i.capitalize())]
+        substitute = [x for i in with_substitute for x in (i.lower() ,i.capitalize())]
+
+        for word, subs in zip(to_replace, substitute): 
+            self.text = self.text.replace(word, subs) 
+        return self
         
         
     def _read_document(self):
@@ -131,5 +145,13 @@ class CloudFromDoc(WordCloud):
         print(f'Wordcloud image saved in {self.output}')
 
 if __name__ == '__main__':
-    custom_args = main()
-    CloudFromDoc(**custom_args)
+    custom_args, word_replacements = main()
+    if word_replacements:
+        # print(word_replacements)
+        # test = 'test this testing thing to tester a bit more'
+        # for r, s in zip(word_replacements['replace_word'], word_replacements['with_substitute']):
+        #     test = test.replace(r, s)
+        # print(test)
+        CloudFromDoc(**custom_args).replace_words(**word_replacements).mk_cloud()
+    else:
+        CloudFromDoc(**custom_args).mk_cloud() 
