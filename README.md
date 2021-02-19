@@ -23,7 +23,10 @@ Maximum number of words to display | -maxwords | integer
 Ratio of words to display horizontally | -h_ratio | integer<br> (from 0-1)
 Saturation | -s | integer<br> (from 0-100)
 Lightness | -l | integer<br> (from 0-100)
-File name to store output | -o | string <br> (NOTE: should end with .png)
+File name to store output | -o | string <br> (NOTE: should end with '.png')
+Words to replace in text | -x1 | string <br> (NOTE: can be multiple strings)<br>(NOTE: always needs to be used together with _-x2_)
+Substitutes for words passed in -x1 | -x2 | string <br> (NOTE: can be multiple strings)<br>(NOTE: always needs to be used together with _-x1_)
+
 
 **Example**:<br>
 `python generate_cloud.py -file_path my_thesis_final_version.txt -bg black -h_ratio 0.6 -o wordcloud_thesis.png`<br>
