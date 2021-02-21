@@ -13,7 +13,7 @@ import re
 def main():
     parser = argparse.ArgumentParser(description='Customize your word cloud!')
     parser.add_argument('-f', action='store', dest='file_path',help='path to text document', type=str)
-    parser.add_argument('-hue', action='store', dest='hue',help='color for word cloud', type=int)
+    parser.add_argument('-hue', action='store', dest='hue',help='color for word cloud', type=str)
     parser.add_argument('-sw', action='store', dest='add_stopwords', nargs='*', help='list of stopwords to add to generic stopwords', type=str)
     parser.add_argument('-bg', action='store', dest='background_color',help='choose background color; check named color options in Python', type=str)
     parser.add_argument('-w', action='store', dest='width',help='image width in pixels', type=int)
@@ -27,6 +27,7 @@ def main():
     parser.add_argument('-x1', action='store', dest='replace_word', nargs='*',help='words to replace with substitutes in text; needs to be used in combination with "-x2"', type=str)
     parser.add_argument('-x2', action='store', dest='with_substitute', nargs='*',help='substitut words; need to be added in order with "-x1"', type=str)
     parser.add_argument('-whatsapp', action='store', dest='whatsapp', nargs='*',help='True if using exported WhatsApp chats; default:False', type=bool)
+    parser.add_argument('-matrix', action='store', dest='matrix', nargs='*',help='Sets parameters to automatically render matrix-like word cloud', type=bool)
 
     args = parser.parse_args()
 
@@ -77,7 +78,7 @@ def main():
 class CloudFromDoc(WordCloud):
     def __init__(self, file_path='doc.txt', add_stopwords=['said','would','one'], background_color='white', 
                  width=1500, height=1000, maxwords=1000, horizontal_ratio=0.75, 
-                 collocation_threshold=30, hue=322, saturation=None, lightness=None, output=None, whatsapp=None, **kwargs):
+                 collocation_threshold=30, hue=322, saturation=None, lightness=None, output=None, whatsapp=None, matrix=None, **kwargs):
         
         self.path = file_path
         self.stopwords = sw.words()
@@ -94,17 +95,28 @@ class CloudFromDoc(WordCloud):
         self.saturation = saturation
         self.lightness = lightness
         self.output = output 
+        self.matrix = matrix
 
         print(self.whatsapp)
 
-        self.cloud = WordCloud(
-            background_color=self.bg_color, 
-            width=self.width, 
-            height=self.height,
-            stopwords=self.stopwords,
-            max_words=self.maxwords,
-            prefer_horizontal=self.horizontal,
-            collocation_threshold=self.collocation_thresh)
+        if self.matrix == None:
+            self.cloud = WordCloud(
+                background_color=self.bg_color, 
+                width=self.width, 
+                height=self.height,
+                stopwords=self.stopwords,
+                max_words=self.maxwords,
+                prefer_horizontal=self.horizontal,
+                collocation_threshold=self.collocation_thresh)
+        else:
+            self.cloud = WordCloud(
+                background_color='black', 
+                width=self.width, 
+                height=self.height,
+                stopwords=self.stopwords,
+                max_words=self.maxwords,
+                prefer_horizontal=0,
+                collocation_threshold=self.collocation_thresh)
  
     def mk_cloud(self):
         
@@ -133,15 +145,15 @@ class CloudFromDoc(WordCloud):
         Function taking to lists and passing them to the string method .replace();
         Saves new string with replaced values in self.text
         '''
-        # add lower-case versio, the capitalized version and the title version for each word in list to new list --> to account for words at beginning of the sentence
+        # add lower-case version, the capitalized version and the title version for each word in list to new list --> to account for words at beginning of the sentence
         to_replace = [x for i in replace_word for x in (i.lower() ,i.capitalize(),i.title())]
         substitute = [x for i in with_substitute for x in (i ,i , i)] #tuple of 3 i's because to_replace and substitue need to be of same length, BUT I only want given spelling here (defined by me)
 
         for word, subs in zip(to_replace, substitute): 
             self.text = self.text.replace(word, subs) 
+
         return self
-        
-        
+
     def process_text(self, text):
         '''
         Processes text in order to filter out punctuation
@@ -169,11 +181,14 @@ class CloudFromDoc(WordCloud):
         return text
 
     def custom_color_func(self, **kwargs):
-        if self.bg_color == 'white':
+        if self.matrix!=None:
+            return(f"hsl(120, 95%, {np.random.randint(5,60) if self.lightness==None else self.lightness}%)")
+        elif self.bg_color == 'white':
             return(f"hsl({np.random.randint(0,360) if self.hue==None else self.hue}, {np.random.randint(15,100) if self.saturation==None else self.saturation}%, {np.random.randint(0,60) if self.lightness==None else self.lightness}%)")
         elif self.bg_color == 'black':
             return(f"hsl({np.random.randint(0,360) if self.hue==None else self.hue}, {np.random.randint(15,100) if self.saturation==None else self.saturation}%, {np.random.randint(7,65) if self.lightness==None else self.lightness}%)")
 
+   
     def set_output(self):  
         cwd = os.getcwd()
         hue = '' if self.hue== None else 'H'+str(self.hue)
