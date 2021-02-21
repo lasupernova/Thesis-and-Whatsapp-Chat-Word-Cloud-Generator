@@ -8,6 +8,7 @@ from nltk.corpus import stopwords as sw
 import sys
 import argparse
 import itertools
+import re
 
 def main():
     parser = argparse.ArgumentParser(description='Customize your word cloud!')
@@ -25,6 +26,7 @@ def main():
     parser.add_argument('-o', action='store', dest='output',help='name of output file', type=str)
     parser.add_argument('-x1', action='store', dest='replace_word', nargs='*',help='words to replace with substitutes in text; needs to be used in combination with "-x2"', type=str)
     parser.add_argument('-x2', action='store', dest='with_substitute', nargs='*',help='substitut words; need to be added in order with "-x1"', type=str)
+    parser.add_argument('-whatsapp', action='store', dest='whatsapp', nargs='*',help='True if using exported WhatsApp chats; default:False', type=bool)
 
     args = parser.parse_args()
 
@@ -75,7 +77,7 @@ def main():
 class CloudFromDoc(WordCloud):
     def __init__(self, file_path='doc.txt', add_stopwords=['said','would','one'], background_color='white', 
                  width=1500, height=1000, maxwords=1000, horizontal_ratio=0.75, 
-                 collocation_threshold=30, hue=322, saturation=None, lightness=None, output=None, **kwargs):
+                 collocation_threshold=30, hue=322, saturation=None, lightness=None, output=None, whatsapp=None, **kwargs):
         
         self.path = file_path
         self.stopwords = sw.words()
@@ -86,11 +88,14 @@ class CloudFromDoc(WordCloud):
         self.horizontal = horizontal_ratio
         self.collocation_thresh = collocation_threshold
         self.bg_color = background_color
+        self.whatsapp = whatsapp #NOTE: self.whatsapp is referenced in self._read_document(), so it needs to be defined prior to calling this funtion
         self.text = self._read_document()
         self.hue = hue
         self.saturation = saturation
         self.lightness = lightness
         self.output = output 
+
+        print(self.whatsapp)
 
         self.cloud = WordCloud(
             background_color=self.bg_color, 
@@ -138,9 +143,15 @@ class CloudFromDoc(WordCloud):
         
         
     def _read_document(self):
+
         with open(self.path, "r", encoding='utf-8') as myfile:
             data = myfile.readlines()
-        text = ','.join(data)
+
+        text = ','.join(data) 
+        
+        if self.whatsapp!=None: #not "if self.whatsapp:" - because this will be an empty list and if self.whatsapp will be False
+            text = self.preprocess_whatsapp(text) 
+
         return text
 
     def custom_color_func(self, **kwargs):
@@ -159,10 +170,32 @@ class CloudFromDoc(WordCloud):
         print(self.output)
         self.cloud.to_file(self.output)
         print(f'Wordcloud image saved in {self.output}')
+    
+    def preprocess_whatsapp(self, text):
+        """
+        Pre-processing of WhatsApp text exports, to make them suitable for inout into wordcloud.
+        Text files from WhatsApp chat export start every message with the following format '[m]m/[d]d/yy, hh:mm - sender_name:'.
+        Additionally WhatsApp-specific text like 'Missed voice call' or '<Media omitted>' are within the text.
+        In order to create a wordcloud that does not display these text parts (date/time, Whatsapp text, contact name) as frequent words, 
+        these parts will be filtered out and removed from text.
+        """
+        regx = r'(\d+/\d+/\d+,\s\d{2}\:\d{2}\s-\s[\s\w.]*:)' #regex for '[m]m/[d]d/yy, hh:mm - sender_name:' - the beginning of every Whatsapp chat export entry
+        pattern = re.compile(regx)
+
+        # list with pattern filtered out
+        filtered_list = [x for x in re.compile(regx).split(text) if not pattern.match(x)] #splits text on regex pattern and only keeps npn-pattern chunks
+        # join list into string
+        filtered_text = " ".join(filtered_list)
+
+        # remove WhatsApp export information, such as 'Media omitted', 'Missed voice call' or 'Video call'
+        processed_text = filtered_text.replace("Media omitted","").replace("Missed voice call","").replace("Missed video call","").replace("Video call","").replace("Voice call","")
+
+        return processed_text
 
 if __name__ == '__main__':
     custom_args, word_replacements = main()
     if word_replacements:
         CloudFromDoc(**custom_args).replace_words(**word_replacements).mk_cloud()
+
     else:
         CloudFromDoc(**custom_args).mk_cloud() 
