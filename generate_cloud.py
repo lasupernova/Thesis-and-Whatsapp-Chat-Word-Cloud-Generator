@@ -135,7 +135,7 @@ class CloudFromDoc(WordCloud):
         '''
         # add lower-case versio, the capitalized version and the title version for each word in list to new list --> to account for words at beginning of the sentence
         to_replace = [x for i in replace_word for x in (i.lower() ,i.capitalize(),i.title())]
-        substitute = [x for i in with_substitute for x in (i.lower() ,i.capitalize(),i.title())]
+        substitute = [x for i in with_substitute for x in (i ,i , i)] #tuple of 3 i's because to_replace and substitue need to be of same length, BUT I only want given spelling here (defined by me)
 
         for word, subs in zip(to_replace, substitute): 
             self.text = self.text.replace(word, subs) 
@@ -155,7 +155,10 @@ class CloudFromDoc(WordCloud):
         return text
 
     def custom_color_func(self, **kwargs):
-        return(f"hsl({np.random.randint(0,360) if self.hue==None else self.hue}, {np.random.randint(15,100) if self.saturation==None else self.saturation}%, {np.random.randint(0,60) if self.lightness==None else self.lightness}%)")
+        if self.bg_color == 'white':
+            return(f"hsl({np.random.randint(0,360) if self.hue==None else self.hue}, {np.random.randint(15,100) if self.saturation==None else self.saturation}%, {np.random.randint(0,60) if self.lightness==None else self.lightness}%)")
+        elif self.bg_color == 'black':
+            return(f"hsl({np.random.randint(0,360) if self.hue==None else self.hue}, {np.random.randint(15,100) if self.saturation==None else self.saturation}%, {np.random.randint(7,65) if self.lightness==None else self.lightness}%)")
 
     def set_output(self):  
         cwd = os.getcwd()
