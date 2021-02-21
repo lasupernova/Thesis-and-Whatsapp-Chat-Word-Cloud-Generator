@@ -18,7 +18,7 @@ def main():
     parser.add_argument('-w', action='store', dest='width',help='image width in pixels', type=int)
     parser.add_argument('-height', action='store', dest='height',help='image height in pixels', type=int)
     parser.add_argument('-maxwords', action='store', dest='maxwords',help='maximum number of different words to display in word cloud', type=int)
-    parser.add_argument('-h_ratio', action='store', dest='horizontal_ratio',help='ratio of words that are going to be displayed horizontally', type=int)
+    parser.add_argument('-h_ratio', action='store', dest='horizontal_ratio',help='ratio of words that are going to be displayed horizontally', type=float)
     parser.add_argument('-ct', action='store', dest='collocation_threshold',help='collocation threshold', type=int)
     parser.add_argument('-s', action='store', dest='saturation',help='saturation', type=int)
     parser.add_argument('-l', action='store', dest='lightness',help='lightness', type=int)
@@ -65,9 +65,9 @@ def main():
                 print(f"{e}\nFix: '-x1' and '-x2' need to be passed together!")
                 sys.exit()
 
-        # exclude values passed to -x1 or -x2 from custom_args, as these should not be passed to class constructor - save these values in  
-        custom_args = {k:v for k,v in all_args.items() if k not in ["replace_word", "with_substitute"]}
-        word_replacements = {k:v for k,v in all_args.items() if k in ["replace_word", "with_substitute"]}
+    # exclude values passed to -x1 or -x2 from custom_args, as these should not be passed to class constructor - save these values in  
+    custom_args = {k:v for k,v in all_args.items() if k not in ["replace_word", "with_substitute"]}
+    word_replacements = {k:v for k,v in all_args.items() if k in ["replace_word", "with_substitute"]}
 
     return custom_args, word_replacements
 
