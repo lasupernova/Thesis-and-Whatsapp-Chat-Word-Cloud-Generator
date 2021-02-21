@@ -142,15 +142,29 @@ class CloudFromDoc(WordCloud):
         return self
         
         
+    def process_text(self, text):
+        '''
+        Processes text in order to filter out punctuation
+        '''
+        from nltk.tokenize import RegexpTokenizer
+
+        tokenizer = RegexpTokenizer(r'\w+')
+        processed_text = " ".join(tokenizer.tokenize(text))
+
+        return processed_text
+        
+        
     def _read_document(self):
 
         with open(self.path, "r", encoding='utf-8') as myfile:
             data = myfile.readlines()
 
         text = ','.join(data) 
-        
+
         if self.whatsapp!=None: #not "if self.whatsapp:" - because this will be an empty list and if self.whatsapp will be False
             text = self.preprocess_whatsapp(text) 
+
+        text = self.process_text(text)
 
         return text
 
