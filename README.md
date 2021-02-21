@@ -8,7 +8,10 @@ Saved as `example.txt`. This is a text file containing the book "The count of Mo
 ### **Usage:**<br>
 `python generate_cloud.py`<br><br>
 By default text information is taken from a file called "doc.txt", so be sure to move a copy of your thesis to you working directory and to rename it to "doc.txt". 
-Alternatively, use a command line argument to change the name of the input file.<br><br><br>
+Alternatively, use a command line argument to change the name of the input file.<br><br>
+### **Usage - Word Cloud from WhatsApp Chat Exports:**<br>
+`python generate_cloud.py - whatsapp`<br><br>
+This will pre-process the WhatsApp chat export file, to exclude dates and other text-parts added by WhatsApp to generate export file (e.g. "Media omitted" text that is inserted inplace of media sent). <br><br><br>
 ### **Customization**:<br>
 A number of different parameters can be customized: <br>
 Parameter | Command Line Argument | Type
@@ -26,6 +29,7 @@ Lightness | -l | integer<br> (from 0-100)
 File name to store output | -o | string <br> (NOTE: should end with '.png')
 Words to replace in text | -x1 | string <br> (NOTE: can be multiple strings)<br>(NOTE: always needs to be used together with _-x2_)
 Substitutes for words passed in -x1 | -x2 | string <br> (NOTE: can be multiple strings)<br>(NOTE: always needs to be used together with _-x1_)
+WhatsApp export-file usage | -whatsapp | simply add "-whatsapp"<br> Use when a WhatsApp chat export file is used as text
 
 
 **Example**:<br>
