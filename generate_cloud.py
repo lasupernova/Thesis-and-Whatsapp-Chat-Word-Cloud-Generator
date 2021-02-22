@@ -9,6 +9,7 @@ import sys
 import argparse
 import itertools
 import re
+import nltk
 
 def main():
     parser = argparse.ArgumentParser(description='Customize your word cloud!')
