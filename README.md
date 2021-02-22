@@ -30,6 +30,7 @@ File name to store output | -o | string <br> (NOTE: should end with '.png')
 Words to replace in text | -x1 | string <br> (NOTE: can be multiple strings)<br>(NOTE: always needs to be used together with _-x2_)
 Substitutes for words passed in -x1 | -x2 | string <br> (NOTE: can be multiple strings)<br>(NOTE: always needs to be used together with _-x1_)
 WhatsApp export-file usage | -whatsapp | simply add "-whatsapp"<br> Use when a WhatsApp chat export file is used as text
+Matrix Effect | -matrix | simply add "-matrix"<br> The program will then automatically ste all parameters  for a matrix-like word cloud<br> _(see below for example)_
 
 
 **Example**:<br>
@@ -53,6 +54,9 @@ Let's change 'count' to 'Simon Basset' ( ...looking at you __Bridgerton__... ) a
 * __Custom usage:__ `python generate_cloud.py -x1 count -x2 Simon_Hastings -f example.txt -o bridgerton2.png -bg black`<br><br>
 I only replaced one word (count -> simon hastings), but multiple words can be creplaced at the same time. <br>E.g: `-x1 count Monte_Cristo -x2 simon_hastings London`  changes "count" to "simon hastings" and "Monte Cristo" to "London". <br> Note that words that belong together, such as "Monte Cristo", should be connected with an underscore.<br><br>
 <img src="https://github.com/lasupernova/thesis_wordcloud_generator/blob/master/example_output/bridgerton2.png" width="600" height="400"><hr>
+* __Matrix usage:__ `python generate_cloud.py -matrix`<br><br>
+Automatically created word cloud with matrix-like style. This specific word cloud was generated using the "-whatsapp" option using a WhatsApp chat export file and I used -x1/-x2 in order to censor names and addresses. You can still specify "-whatsapp", and the input (-f) and output (-o) files.<br><br>
+<img src="https://github.com/lasupernova/thesis_wordcloud_generator/blob/master/example_output/matrix.png" width="600" height="400"><hr>
 __Custom usage:__ 
 <br>* Left (saturation and lightness adjusted): `python generate_cloud.py -s 25 -l 90`<br>
 <br>* Right (allow for random word colors): `python generate_cloud.py -hue None`<br><br>
