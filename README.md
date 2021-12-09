@@ -3,7 +3,7 @@ Python CLI tool to generate customized word clouds from documents, especially la
 Don't want to work with the command line? Use the jupyter notebook instead (see instructions and examples below)<hr>
 ![Example of word cloud, Low Height](example_output/example6_width1500_height100.png?raw=true "Custom settings")
 ### **Example text file for practice:**<br>
-Saved as `example.txt`. This is a text file containing the book "The count of Monte Cristo".<br><br>
+Saved as `example.txt`. This is a text file containing the book "The Count of Monte Cristo".<br><br>
 
 ### **Usage:**<br>
 `python generate_cloud.py`<br><br>
